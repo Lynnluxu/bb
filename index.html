@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link href="https://fonts.loli.net/css?family=Noto+Serif+SC:200,300,900&display=swap&subset=chinese-simplified" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<meta name="description" content="Website for talking">
+<meta name="keywords" content="XULu, b言b语, daibor"/>
+<meta name="author" content="XU Lu" />
+<meta charset="utf-8"/>
+<meta name="robots" content="index,follow" />
+<meta name="google" content="index,follow" />
+<meta name="googlebot" content="index,follow"/>
+<meta name="verify" content="index,follow" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="google-site-verification" content="XULu, 徐璐, 徐璐的博客, 徐二, 徐贰, Linux, talking, leancloud, shortcut" />
+<head>
+	<title>废话胶囊</title>
+</head>
+<body>
+	<header id="header">
+		<h1>废话胶囊</h1>
+		<p class="tip" v-cloak>Piffled {{count}} times</p>
+	</header>
+	<main id="app">
+		<section class="item" v-for="item in contents" v-cloak>
+			<p>{{item.attributes.content}}</p>
+			<time v-bind:datetime="item.attributes.time">{{item.attributes.time}}</time>
+		</section>
+		<div class="load-ctn">
+			<button class="load-btn" v-on:click="loadMore" v-if="contents" v-cloak>more</button>
+			<p class="tip" v-else>loading...</p>
+		</div>
+	</main>
+	<aside>
+		<p id="describe">
+			我是一个太喜欢说话的人。这里的说话既指字面意思的说话，也指在互联网平台上发言。我的微博不知不觉叨叨了上千条，还不算上年轻时候删掉过的一些。我实在太愿意说话了。我难以深究这是源自于怎么样的反馈。只能说，我真的非常喜欢把自己的想法分享给别人，我甚至都非常想，让别人也能别走那些我认为的弯路，或者我单纯认为十分愚蠢的路。不可谓不是一种强人所难的行为。分享是我本身会从一键发出我的一段文字的事件得到快乐。</br>——Xu Lu
+		</p>
+	</aside>
+	<footer>
+		<p class="center-text">Copyright © 2019 Xu Lu,All Rights Reserved</p>
+	</footer>
+</body>
+<style type="text/css">
+	[v-cloak] {
+		display: none;
+	}
+	html{
+		font-size: 20px;
+	}
+	body,button{
+		background: rgb(220,220,220);
+		font-family: 'Noto Serif SC', serif;
+	}
+	aside{
+		font-weight: 300;
+		font-style: normal;
+		line-height: 1.8rem;
+		position: fixed;
+		right: 100px;
+		top: 120px;
+		width: 200px;
+		background: #e5e5e5;
+		padding: 10px 20px;
+		border-radius: 5px;
+		box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+	}
+	#app,header,footer{
+		box-sizing: border-box;
+		width: 500px;
+		margin: 0 auto;
+		padding: 0 20px;
+	}
+	@media (max-width: 500px) {
+		#app,footer,header{
+			width: 100%;
+		}
+	}
+	@media (max-width: 1200px){
+		aside{
+			display: none;
+		}
+	}
+	h1{
+		font-weight: 900;
+	}
+	footer{
+		font-size: 0.8rem;
+		clear: 	both;
+	}
+	.tip{
+		color: #999;
+	}
+	.item{
+		/*font-family: 'Noto Serif CJK SC', 'Source Han Serif SC', ‘Source Han Serif’, source-han-serif-sc, '宋体', serif;*/
+		font-weight: 300;
+		font-style: normal;
+		line-height: 1.8rem;
+		background: #fff;
+		padding: 10px 20px;
+		border-radius: 5px;
+		box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+		margin-top: 20px;
+	}
+	time{
+		font-weight: 200;
+		color: #bbb;
+	}
+	.center-text{
+		text-align: center;
+	}
+	.load-ctn{
+		width: 100%;
+	}
+	.load-btn{
+	    border: 2px solid #666;
+	    width: 130px;
+	    outline: none;
+	    font-size: 20px;
+	    border-radius: 100px;
+	    margin: 30px auto;
+	    color: #666;
+	    line-height: 30px;
+	    float: 	right;
+	}
+	.load-btn:hover:active{
+		background: #666;
+		color: #fff;
+	}
+</style>
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<script type="text/javascript" src="https://vuejs.org/js/vue.min.js"></script>
+<script src="./av-min.js"></script>
+<script type="text/javascript" >
+	var { Query, User } = AV;
+	AV.init({appId:"nkK3WSSjDglxcxUewDSnrDpy-MdYXbMMI", appKey:"WRTfwuX5fQgqFN3u3C1xAU86"});
+
+	var query = new AV.Query('content');
+	var page = 0,reqSatus = false;
+
+	var app = new Vue({
+				el: '#app',
+				data: {
+			  		contents: []
+				},
+				methods: {
+					loadMore: function (event) {
+						getData(++page);
+					}
+				}
+			})
+
+	var header = new Vue({
+		el: '#header',
+		data: {
+			count: 0
+		}
+	})
+
+	function getData(page = 0) {
+		query.descending('createdAt').skip(page*20).limit(20).find().then(function (results) {
+			console.log(results)
+			if(results.length==0){
+				alert('No more before')
+			}else{
+				let resFormatted = results;
+				reqData = false;
+				resFormatted.forEach((i)=>{
+					let dateTmp = new Date(i.createdAt);
+					i.attributes.time = `${dateTmp.getFullYear()}-${(dateTmp.getMonth() + 1) < 10 ? ('0' + (dateTmp.getMonth()+1)) : dateTmp.getMonth()+1}-${(dateTmp.getDate() + 1) < 10 ? ('0' + dateTmp.getDate()) : dateTmp.getDate()} ${(dateTmp.getHours() + 1) <= 10 ? ('0' + dateTmp.getHours()) : dateTmp.getHours()}:${(dateTmp.getMinutes() + 1) <= 10 ? ('0' + dateTmp.getMinutes()) : dateTmp.getMinutes()}`;
+					app.contents.push(i);
+				})
+			}
+
+		}, function (error) {
+		});
+	}
+
+	getData(0);
+
+	query.count().then(function (count) {
+		header.count = count;
+		console.log(count)
+	}, function (error) {
+	});
+</script>
+</html>
